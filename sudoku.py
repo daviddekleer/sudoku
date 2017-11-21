@@ -20,7 +20,6 @@ def allowed_numbers_for_pos(s, pos):
     numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     x = pos[0]
     y = pos[1]
-    s[y][x] = 0
 
     # find left top postion of square
     x_square_start = (x // 3) * 3
@@ -47,40 +46,22 @@ def allowed_numbers_for_pos(s, pos):
     return numbers
 
 
-def backtrack(s, pos, predefined):
-    # set positions to 0, starting from pos
-    for y in range(pos[1], 9):
-        for x in range(pos[0], 9):
-            if (x, y) in predefined:  # don't alter predefined numbers
-                continue
-            s[y][x] = 0
-    return s
-
-
-def predefined_numbers(s):
-    predefined = []
-    for y in range(9):
-        for x in range(9):
-            if s[y][x]:
-                predefined.append((x, y))
-    return predefined
-
-
 def sudoku_solver(s, pos=None, predefined=None):
     if pos is True:  # solved
         return s
 
     if not pos:  # initialize pos and predefined numbers
         pos = next_pos(s)
-        predefined = predefined_numbers(s)
 
+    x = pos[0]
+    y = pos[1]
     allowed_numbers = allowed_numbers_for_pos(s, pos)
     for number in allowed_numbers:
         # try the allowed numbers and continue with next pos
-        s[pos[1]][pos[0]] = number
-        if sudoku_solver(s, next_pos(s, pos), predefined):
+        s[y][x] = number
+        if sudoku_solver(s, next_pos(s, pos)):
             return s
-    s = backtrack(s, pos, predefined)
+    s[y][x] = 0  # backtrack, reset cell to 0
     return False  # stop searching this recursion tree: no solution
 
 
